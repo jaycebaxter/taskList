@@ -33,6 +33,9 @@ private int currentIndex = 0;
     public TaskListUI() {
         initComponents();
         
+        // Making the task number uneditable so it always increments by 1
+        taskNumberTextField.setEnabled(false);
+        
              loadTasksFromFile();
              updateDisplay();
 
@@ -149,20 +152,21 @@ private int currentIndex = 0;
                         .addComponent(forwardButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(deadlineLabel)
-                            .addComponent(statusLabel))
-                        .addGap(31, 31, 31)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dateDeadlineTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(doneStatusCheckBox)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(taskNumberLabel)
-                            .addComponent(TaskLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(taskDescriptionTextField)
-                            .addComponent(taskNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(statusLabel)
+                                .addGap(165, 165, 165)
+                                .addComponent(doneStatusCheckBox))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(taskNumberLabel)
+                                    .addComponent(TaskLabel)
+                                    .addComponent(deadlineLabel))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dateDeadlineTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(taskNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(taskDescriptionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -188,8 +192,7 @@ private int currentIndex = 0;
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(doneStatusCheckBox)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(statusLabel)))
+                    .addComponent(statusLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(saveListButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -200,6 +203,11 @@ private int currentIndex = 0;
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Handles the back button functionality and only makes it available
+     * if there is a previous task
+     * @param evt backButtonActionPerformed
+     */
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
         // TODO add your handling code here:
     if (currentIndex > 0) {
@@ -231,8 +239,13 @@ private int currentIndex = 0;
         // TODO add your handling code here:
     }//GEN-LAST:event_doneStatusCheckBoxActionPerformed
 
+    /**
+     * Saves the task to the array, but does not save anything to a file
+     * until "save list" is pressed
+     * @param evt saveTaskButtonActionPerformed
+     */
     private void saveTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveTaskButtonActionPerformed
-        // TODO add your handling code here:
+        
         String deadlineInput = dateDeadlineTextField.getText();
 
             if (!isValidDeadlineFormat(deadlineInput)) {
@@ -246,12 +259,18 @@ private int currentIndex = 0;
             currentTask.setDeadline(deadlineInput);
             currentTask.setDone(doneStatusCheckBox.isSelected());
             updateDisplay();
+            
+            JOptionPane.showMessageDialog(this, "Task saved:\n" +
+                    "Task ID: " + currentTask.getTaskNumber() +
+                    "\nDescription: " + currentTask.getDescription() +
+                    "\nDeadline: " + currentTask.getDeadline() +
+                    "\nCompleted: " + currentTask.isDone());
     }
 
     }//GEN-LAST:event_saveTaskButtonActionPerformed
 
     private void newTaskButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newTaskButtonActionPerformed
-        // TODO add your handling code here:
+
         int newTaskNumber = taskList.size() + 1;
         Task newTask = new Task(newTaskNumber, "", "", false);
         taskList.add(newTask);
@@ -334,7 +353,12 @@ private void updateDisplay() {
         }
     }
 
+/**
+ * Saves tasks to an actual file so that they can be changed / removed / deleted
+ */
 private void saveTasksToFile() {
+    JOptionPane.showMessageDialog(this, "Saving " + taskList.size() + " tasks to file");  // Add this line
+    
     try {
         FileWriter writer = new FileWriter("tasks.txt");
         for (Task task : taskList) {
@@ -368,6 +392,19 @@ private void loadTasksFromFile() {
                 }
             }
             scanner.close();
+            
+            // Checks if the tasklist is empty, sets current index to
+            // 0 if so, loading only 1 task
+            // If there are more tasks, loads up to the last one.
+            if (taskList.isEmpty()) {
+                currentIndex = 0;
+            }
+            
+            else {
+                currentIndex = taskList.size() - 1;
+            }
+            
+            updateDisplay();
         }
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Error loading tasks from file.");
@@ -378,4 +415,3 @@ private boolean isValidDeadlineFormat(String date) {
     return date.matches("\\d{4}-\\d{2}-\\d{2}");
 }
 }
-
