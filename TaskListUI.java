@@ -248,8 +248,9 @@ private int currentIndex = 0;
         
         String deadlineInput = dateDeadlineTextField.getText();
 
+            // Checks that the date is in YYYY-MM-DD format, returns an error alert if not
             if (!isValidDeadlineFormat(deadlineInput)) {
-            JOptionPane.showMessageDialog(this, "Invalid deadline format.\nPlease use YYYY-MM-DD (e.g., 2025-04-15).");
+            JOptionPane.showMessageDialog(this, "Invalid deadline format.\nPlease use YYYY-MM-DD (e.g., 2025-04-15)\nYear range: 1950-2050");
             return;
     }
 
@@ -412,6 +413,40 @@ private void loadTasksFromFile() {
 }
 
 private boolean isValidDeadlineFormat(String date) {
-    return date.matches("\\d{4}-\\d{2}-\\d{2}");
+    if (date.matches("\\d{4}-\\d{2}-\\d{2}") == false) {
+        return false;
+    }
+    
+    try {
+        
+        // Splitting the date at the hyphens so I can get the year month & date
+        String[] dateParts = date.split("-");
+        int year = Integer.parseInt(dateParts[0]);
+        int month = Integer.parseInt(dateParts[1]);
+        int day = Integer.parseInt(dateParts[2]);
+        
+        
+        // Validating that the year month and date are normal, returning
+        // false in all other scenarios
+        if (year > 2050 || year < 1950) {
+            return false;
+        }
+        
+        if (month > 12 || month < 1) {
+            return false;
+        }
+        
+        if (day > 31 || day < 1) {
+            return false;
+        }
+        
+        else {
+            return true;
+        }
+    }
+    
+    catch (Exception e) {
+        return false;
+    }
 }
 }
