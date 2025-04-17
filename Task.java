@@ -6,10 +6,14 @@ package tasklist;
  */
 
 /**
- * @Program Task.java
- * @Author Hezikiah Cua and Jayce Baxter
- * @Date April 16th 2025
- */
+ * Program:             TaskList.java
+ * Date:                April 17, 2025
+ * @Author:             Hezekiah Cua and Jayce Baxter
+ * Description:         A simple Task list app made using Java and Swing
+ *                      This program lets users load tasks from a file,
+ *                      view them one by one, edit them, and add new ones,
+ *                      and save everything back to the file.
+ */     
 
 /**
  * Task class

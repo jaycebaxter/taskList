@@ -2,7 +2,6 @@
 package tasklist;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import java.io.File;
@@ -18,10 +17,14 @@ import java.util.Scanner;
  */
 
 /**
- * @Program TaskListUI.java
- * @Author Hezikiah Cua and Jayce Baxter
- * @Date April 16th 2025
- */
+ * Program:             TaskList.java
+ * Date:                April 17, 2025
+ * @Author:             Hezekiah Cua and Jayce Baxter
+ * Description:         A simple Task list app made using Java and Swing
+ *                      This program lets users load tasks from a file,
+ *                      view them one by one, edit them, and add new ones,
+ *                      and save everything back to the file.
+ */     
 
 /**
  * TaskListUI class
@@ -396,7 +399,8 @@ private void saveTasksToFile() {
     // Alerts with how many tasks are being saved
     JOptionPane.showMessageDialog(this, "Saving " + taskList.size() + " tasks to file");
     
-    // hezikiah comment this im too tired to figure out wtf Task task : tasklist does Lol
+     // It loops through every Task object inside our taskList ArrayList
+    // Each time the loop runs, "task" represents the current Task we're saving
     try {
         FileWriter writer = new FileWriter("tasks.txt");
         for (Task task : taskList) {
@@ -421,20 +425,24 @@ private void saveTasksToFile() {
  */
 private void loadTasksFromFile() {
     
-    // Hezikiah comment this too im goign to bed
+    
     try {
+        // Accesses the file where tasks were saved
         File file = new File("tasks.txt");
         if (file.exists()) {
             Scanner scanner = new Scanner(file);
             taskList.clear(); 
+            // Scanner reads each line in the file
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] parts = line.split(",", -1);
+                // Checks if there are exactly four parts per line
                 if (parts.length == 4) {
                     int number = Integer.parseInt(parts[0]);
                     String description = parts[1];
                     String deadline = parts[2];
                     boolean isDone = Boolean.parseBoolean(parts[3]);
+                    // Adds the Task object using the values and adds them to the list             
                     taskList.add(new Task(number, description, deadline, isDone));
                 }
             }
@@ -454,6 +462,8 @@ private void loadTasksFromFile() {
             updateDisplay();
         }
     } catch (Exception e) {
+        // If something goes wrong while trying to load the file
+       // an error message will appear
         JOptionPane.showMessageDialog(this, "Error loading tasks from file.");
     }
 }
